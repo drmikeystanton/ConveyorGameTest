@@ -39,6 +39,7 @@ public class ConveyorEngine : MonoBehaviour {
 
 		gameView = new ConveyorView ();
 
+		/*
 		TimerCheckForMinLetters = new Timer (timeForMinLetterCheck);
 		TimerCheckForMinLetters.AutoReset = true;
 		TimerCheckForMinLetters.Elapsed += CheckForMinLetters;
@@ -46,11 +47,45 @@ public class ConveyorEngine : MonoBehaviour {
 		TimerPushNewLetter = new Timer (timeForPushLetter);
 		TimerPushNewLetter.AutoReset = true;
 		TimerPushNewLetter.Elapsed += PushNewLetterTimerHandler;
+		*/
 
 		tileRef = Resources.Load ("LetterTileView") as GameObject;
 
-		Initialize ();
+		//Initialize ();
 
+		StartCoroutine(SampleCouroutine(1.0f));
+
+	}
+
+	private IEnumerator SampleCouroutine(float waitDelay)
+	{
+		int numLoops = 15;
+		int loopCounter = 0;
+
+		while (true) //loop forever until we break the coroutine
+		{
+			yield return new WaitForSeconds(waitDelay); //wait one second in execution
+
+			Debug.Log("Spawning after a delay");
+
+			Instantiate(tileRef);
+
+			yield return new WaitForEndOfFrame(); // wait one more frame for fun
+
+			//Another way to wait
+			//yield return new WaitUntil(< FUNCTION >);
+
+			loopCounter++;
+
+			if (loopCounter >= numLoops)
+			{
+				yield break; //exit the couroutine
+			}
+
+			//Other ways to stop coroutines
+			//StopAllCoroutines();
+			//StopCoroutine(<ReferenceEquals HERE>);
+		}
 	}
 	
 	// Update is called once per frame
