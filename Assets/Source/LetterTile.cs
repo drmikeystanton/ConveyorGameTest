@@ -14,10 +14,7 @@ public class LetterTile {
 
 	private GameObject tileView;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
+
 
 	public void setupTile (char _letter, string _bonus="")
 	{
@@ -29,16 +26,15 @@ public class LetterTile {
 	{
 		return letterValue.ToString();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
 	public void activateTile (GameObject _tileView)
 	{
 
 		tileView = _tileView;
+	}
 
+	public char getLetterValue ()
+	{
+		return letterValue;
 	}
 }

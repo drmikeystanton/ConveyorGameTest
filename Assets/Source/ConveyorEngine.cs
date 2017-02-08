@@ -8,8 +8,8 @@ public class ConveyorEngine : MonoBehaviour {
 
 	const int minActiveLetters = 3;
 	const int maxActiveLetters = 8;
-	const int timeForMinLetterCheck = 500;
-	const int timeForPushLetter = 5000;
+	const float timeForMinLetterCheck = .5f;
+	const float timeForPushLetter = 5f;
 
 
 
@@ -39,25 +39,15 @@ public class ConveyorEngine : MonoBehaviour {
 
 		gameView = new ConveyorView ();
 
-		/*
-		TimerCheckForMinLetters = new Timer (timeForMinLetterCheck);
-		TimerCheckForMinLetters.AutoReset = true;
-		TimerCheckForMinLetters.Elapsed += CheckForMinLetters;
+		tileRef = Resources.Load ("LetterTilePrefab") as GameObject;
 
-		TimerPushNewLetter = new Timer (timeForPushLetter);
-		TimerPushNewLetter.AutoReset = true;
-		TimerPushNewLetter.Elapsed += PushNewLetterTimerHandler;
-		*/
 
-		tileRef = Resources.Load ("LetterTileView") as GameObject;
-
-		//Initialize ();
-
-		StartCoroutine(SampleCouroutine(1.0f));
+		StartCoroutine (PushNewLetterCoroutine (timeForPushLetter));
+		StartCoroutine (CheckForMinLettersCoroutine (timeForMinLetterCheck));
 
 	}
 
-	private IEnumerator SampleCouroutine(float waitDelay)
+	/*private IEnumerator SampleCouroutine(float waitDelay)
 	{
 		int numLoops = 15;
 		int loopCounter = 0;
@@ -86,33 +76,22 @@ public class ConveyorEngine : MonoBehaviour {
 			//StopAllCoroutines();
 			//StopCoroutine(<ReferenceEquals HERE>);
 		}
-	}
+	}*/
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetMouseButtonDown (0)) {
+		/*if (Input.GetMouseButtonDown (0)) {
 			PushNewLetter ();
-		}
+		}*/
 	}
 
 	void OnDestroy ()
 	{
-		TimerCheckForMinLetters.Stop ();
-		TimerCheckForMinLetters.Elapsed -= CheckForMinLetters;
-		TimerPushNewLetter.Stop ();
-		TimerPushNewLetter.Elapsed -= PushNewLetterTimerHandler;
+		
 	}
 
 	void onMouseDown () {
 		//Debug.Log ("mouse pressed");
-	}
-
-	public void Initialize ()
-	{
-
-		TimerCheckForMinLetters.Start ();
-		TimerPushNewLetter.Start ();
-
 	}
 
 
@@ -134,7 +113,20 @@ public class ConveyorEngine : MonoBehaviour {
 
 	}
 
-	void CheckForMinLetters (object timer, ElapsedEventArgs evt)
+	private IEnumerator CheckForMinLettersCoroutine (float delay)
+	{
+
+		while (true) {
+
+			yield return new WaitForSeconds (delay);
+
+			CheckForMinLetters ();
+
+		}
+
+	}
+
+	void CheckForMinLetters ()
 	{
 
 		if (gameState.IsBagEmpty ()) {
@@ -149,9 +141,16 @@ public class ConveyorEngine : MonoBehaviour {
 
 	}
 
-	void PushNewLetterTimerHandler (object timer, ElapsedEventArgs evt)
+
+	private IEnumerator PushNewLetterCoroutine (float delay)
 	{
-		PushNewLetter ();
+		while (true) {
+
+			yield return new WaitForSeconds (delay);
+			
+			PushNewLetter ();
+
+		}
 	}
 
 	void PushNewLetter ()
@@ -164,6 +163,7 @@ public class ConveyorEngine : MonoBehaviour {
 		LetterTile newTile = gameState.PullTileFromBag ();
 		GameObject tileGameObject = gameView.addNewTile ();
 		newTile.activateTile (tileGameObject);
+		tileGameObject.GetComponentInChildren<TextMesh> ().text = newTile.getLetterValue ().ToString ().ToUpper();
 
 		int num = gameState.GetNumActiveTiles ();
 
