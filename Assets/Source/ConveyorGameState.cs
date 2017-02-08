@@ -29,7 +29,8 @@ public class ConveyorGameState {
 	public void PullTileFromBag ()
 	{
 
-		randomBagTilePos = rnd.Next(0, tileBag.Count);
+		//randomBagTilePos = rnd.Next(0, tileBag.Count);
+		randomBagTilePos = (int)Random.Range(0, tileBag.Count);
 		activeTiles.Add(tileBag[randomBagTilePos]);
 		tileBag.RemoveAt(randomBagTilePos);
 
