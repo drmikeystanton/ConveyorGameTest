@@ -6,10 +6,10 @@ using UnityEngine;
 
 public class ConveyorEngine : MonoBehaviour {
 
-	const int minActiveLetters = 5;
+	const int minActiveLetters = 3;
 	const int maxActiveLetters = 8;
-	const int timeForMinLetterCheck = 60;
-	const int timeForPushLetter = 3000;
+	const int timeForMinLetterCheck = 500;
+	const int timeForPushLetter = 5000;
 
 
 
@@ -38,11 +38,11 @@ public class ConveyorEngine : MonoBehaviour {
 		view = new ConveyorView ();
 
 		TimerCheckForMinLetters = new Timer (timeForMinLetterCheck);
-		//TimerCheckForMinLetters.AutoReset = true;
+		TimerCheckForMinLetters.AutoReset = true;
 		TimerCheckForMinLetters.Elapsed += CheckForMinLetters;
 
 		TimerPushNewLetter = new Timer (timeForPushLetter);
-		//TimerPushNewLetter.AutoReset = true;
+		TimerPushNewLetter.AutoReset = true;
 		TimerPushNewLetter.Elapsed += PushNewLetterTimerHandler;
 
 		Initialize ();
@@ -52,7 +52,7 @@ public class ConveyorEngine : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetMouseButtonDown (0)) {
-			PushNewLetter ();
+		//	PushNewLetter ();
 		}
 	}
 
@@ -63,8 +63,8 @@ public class ConveyorEngine : MonoBehaviour {
 	public void Initialize ()
 	{
 
-		//TimerCheckForMinLetters.Start ();
-		//TimerPushNewLetter.Start ();
+		TimerCheckForMinLetters.Start ();
+		TimerPushNewLetter.Start ();
 
 	}
 
@@ -89,9 +89,6 @@ public class ConveyorEngine : MonoBehaviour {
 
 	void CheckForMinLetters (object timer, ElapsedEventArgs evt)
 	{
-
-		Debug.Log ("check for min letters!!");
-		TimerCheckForMinLetters.Stop ();
 
 		if (gameState.IsBagEmpty ()) {
 			RefillBag ();
