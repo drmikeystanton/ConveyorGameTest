@@ -56,6 +56,14 @@ public class ConveyorEngine : MonoBehaviour {
 		}
 	}
 
+	void OnDestroy ()
+	{
+		TimerCheckForMinLetters.Stop ();
+		TimerCheckForMinLetters.Elapsed -= CheckForMinLetters;
+		TimerPushNewLetter.Stop ();
+		TimerPushNewLetter.Elapsed -= PushNewLetterTimerHandler;
+	}
+
 	void onMouseDown () {
 		//Debug.Log ("mouse pressed");
 	}
