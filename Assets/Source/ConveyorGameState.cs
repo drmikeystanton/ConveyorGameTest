@@ -26,13 +26,16 @@ public class ConveyorGameState {
 
 	}
 
-	public void PullTileFromBag ()
+	public LetterTile PullTileFromBag ()
 	{
 
-		//randomBagTilePos = rnd.Next(0, tileBag.Count);
-		randomBagTilePos = (int)Random.Range(0, tileBag.Count);
-		activeTiles.Add(tileBag[randomBagTilePos]);
+		randomBagTilePos = rnd.Next(0, tileBag.Count);
+		//randomBagTilePos = (int)Random.Range(0, tileBag.Count);
+		LetterTile newTile = tileBag[randomBagTilePos];
+		activeTiles.Add(newTile);
 		tileBag.RemoveAt(randomBagTilePos);
+
+		return newTile;
 
 	}
 

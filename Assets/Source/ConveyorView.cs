@@ -14,6 +14,14 @@ public class ConveyorView {
 		
 	}
 
+	public GameObject addNewTile ()
+	{
+
+		GameObject newTile = GameObject.Instantiate (ConveyorEngine.tileRef) as GameObject;
+		return newTile;
+
+	}
+
 	public void UpdateActiveTiles ()
 	{
 

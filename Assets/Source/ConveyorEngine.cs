@@ -16,13 +16,15 @@ public class ConveyorEngine : MonoBehaviour {
 
 	private List<char> LetterDistribution;
 	private List<char> TempLetters;
-	private string letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	private string letters = "aaaaaaaaabbccddddeeeeeeeeeeeeffggghhiiiiiiiiijkllllmmnnnnnnooooooooppqrrrrrrssssttttttuuuuvvwwxyyzaaaaaaaaabbccddddeeeeeeeeeeeeffggghhiiiiiiiiijkllllmmnnnnnnooooooooppqrrrrrrssssttttttuuuuvvwwxyyzaaaaaaaaabbccddddeeeeeeeeeeeeffggghhiiiiiiiiijkllllmmnnnnnnooooooooppqrrrrrrssssttttttuuuuvvwwxyyz";
 
 	private ConveyorGameState gameState;
-	private ConveyorView view;
+	private ConveyorView gameView;
 
 	private Timer TimerCheckForMinLetters;
 	private Timer TimerPushNewLetter;
+
+	public static GameObject tileRef;
 
 	// Use this for initialization
 	void Start () {
@@ -35,7 +37,7 @@ public class ConveyorEngine : MonoBehaviour {
 		gameState = new ConveyorGameState ();
 		gameState.Initialize ();
 
-		view = new ConveyorView ();
+		gameView = new ConveyorView ();
 
 		TimerCheckForMinLetters = new Timer (timeForMinLetterCheck);
 		TimerCheckForMinLetters.AutoReset = true;
@@ -45,6 +47,8 @@ public class ConveyorEngine : MonoBehaviour {
 		TimerPushNewLetter.AutoReset = true;
 		TimerPushNewLetter.Elapsed += PushNewLetterTimerHandler;
 
+		tileRef = Resources.Load ("LetterTileView") as GameObject;
+
 		Initialize ();
 
 	}
@@ -52,7 +56,7 @@ public class ConveyorEngine : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetMouseButtonDown (0)) {
-		//	PushNewLetter ();
+			PushNewLetter ();
 		}
 	}
 
@@ -112,23 +116,19 @@ public class ConveyorEngine : MonoBehaviour {
 
 	void PushNewLetterTimerHandler (object timer, ElapsedEventArgs evt)
 	{
-
-		Debug.Log ("timer push a new letter");
 		PushNewLetter ();
-
 	}
 
 	void PushNewLetter ()
 	{
-		Debug.Log ("lets add one");
-
 		if (gameState.IsBagEmpty ()) {
 
 			RefillBag ();
 		}
 
-		gameState.PullTileFromBag ();
-
+		LetterTile newTile = gameState.PullTileFromBag ();
+		GameObject tileGameObject = gameView.addNewTile ();
+		newTile.activateTile (tileGameObject);
 
 		int num = gameState.GetNumActiveTiles ();
 
@@ -137,7 +137,6 @@ public class ConveyorEngine : MonoBehaviour {
 		}
 
 		gameState.DebugGameState ();
-
 	}
 
 	void RemoveOldestLetter ()

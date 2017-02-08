@@ -10,6 +10,9 @@ public class LetterTile {
 
 	private char letterValue;
 	private string bonus;
+	private int activePosition;
+
+	private GameObject tileView;
 
 	// Use this for initialization
 	void Start () {
@@ -22,15 +25,20 @@ public class LetterTile {
 		bonus = _bonus;
 	}
 
-	override public string ToString ()
+	override public string ToString () // For debug to easily evaluate
 	{
-
 		return letterValue.ToString();
-
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		
+	}
+
+	public void activateTile (GameObject _tileView)
+	{
+
+		tileView = _tileView;
+
 	}
 }
