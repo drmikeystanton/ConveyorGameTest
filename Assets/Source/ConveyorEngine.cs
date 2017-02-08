@@ -131,7 +131,7 @@ public class ConveyorEngine : MonoBehaviour {
 			RemoveOldestLetter ();
 		}
 
-		Debug.Log (gameState.GetActiveTiles ().ToString());
+		gameState.DebugGameState ();
 
 	}
 

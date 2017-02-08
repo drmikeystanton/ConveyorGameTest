@@ -22,7 +22,7 @@ public class ConveyorGameState {
 	{
 
 		tileBag.Add(_tile);
-		Debug.Log ("add to tile bag"+ tileBag.Count + " "+_tile);
+		//Debug.Log ("add to tile bag"+ tileBag.Count + " "+_tile);
 
 	}
 
@@ -38,7 +38,7 @@ public class ConveyorGameState {
 	public void RemoveOldestTile ()
 	{
 
-		tileBag.RemoveAt (0);
+		activeTiles.RemoveAt (0);
 
 	}
 
@@ -60,6 +60,19 @@ public class ConveyorGameState {
 	{
 
 		return activeTiles;
+
+	}
+
+	public void DebugGameState ()
+	{
+
+		string stateString = "";
+
+		foreach (LetterTile tile in activeTiles) {
+			stateString += tile.ToString ();
+		}
+
+		Debug.Log (stateString);
 
 	}
 
