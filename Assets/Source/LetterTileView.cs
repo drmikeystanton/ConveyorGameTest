@@ -13,4 +13,9 @@ public class LetterTileView : MonoBehaviour {
 	void Update () {
 		gameObject.transform.Translate (-.005f, 0f, 0f);
 	}
+
+	void OnMouseDown ()
+	{
+		
+	}
 }
