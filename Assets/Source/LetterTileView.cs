@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class LetterTileView : MonoBehaviour {
 
+	float flySpeed = 0f;
+	float rotate;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -12,10 +15,17 @@ public class LetterTileView : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		gameObject.transform.Translate (-.005f, 0f, 0f);
+		if (flySpeed != 0f) {
+			flySpeed += .01f;
+
+			gameObject.transform.Rotate (rotate, 0, rotate);
+			gameObject.transform.Translate (0f, flySpeed, 0f);
+		}
 	}
 
 	void OnMouseDown ()
 	{
-		
+		rotate = Random.Range (-5f, 5f);
+		flySpeed = Random.Range (.001f, .05f);
 	}
 }
