@@ -18,8 +18,8 @@ public class LetterTileView : MonoBehaviour {
 		if (flySpeed != 0f) {
 			flySpeed += .01f;
 
-			transform.Rotate (new Vector3(rotate, 0, rotate));
-			transform.Translate (0f, flySpeed, 0f);
+			transform.eulerAngles = transform.eulerAngles + new Vector3(rotate, 0, rotate);
+			transform.position = transform.position + new Vector3 (0f, flySpeed, 0f);
 		} else {
 			transform.Translate (-.005f, 0f, 0f);
 		}
