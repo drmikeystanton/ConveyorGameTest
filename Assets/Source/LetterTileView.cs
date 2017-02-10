@@ -18,10 +18,10 @@ public class LetterTileView : MonoBehaviour {
 		if (flySpeed != 0f) {
 			flySpeed += .01f;
 
-			gameObject.transform.Rotate (rotate, 0, rotate);
-			gameObject.transform.Translate (0f, flySpeed, 0f);
+			transform.Rotate (new Vector3(rotate, 0, rotate));
+			transform.Translate (0f, flySpeed, 0f);
 		} else {
-			gameObject.transform.Translate (-.005f, 0f, 0f);
+			transform.Translate (-.005f, 0f, 0f);
 		}
 	}
 
