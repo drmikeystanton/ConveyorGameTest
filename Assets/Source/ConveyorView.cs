@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ConveyorView {
+public class ConveyorView : MonoBehaviour {
+
+	[SerializeField]
+	private GameObject tileRef;
 
 	// Use this for initialization
 	void Start () {
@@ -17,7 +20,7 @@ public class ConveyorView {
 	public GameObject addNewTile ()
 	{
 
-		GameObject newTile = GameObject.Instantiate (ConveyorEngine.tileRef) as GameObject;
+		GameObject newTile = GameObject.Instantiate (tileRef) as GameObject;
 		return newTile;
 
 	}

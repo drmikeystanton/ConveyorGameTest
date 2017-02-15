@@ -19,12 +19,15 @@ public class ConveyorEngine : MonoBehaviour {
 	private string letters = "aaaaaaaaabbccddddeeeeeeeeeeeeffggghhiiiiiiiiijkllllmmnnnnnnooooooooppqrrrrrrssssttttttuuuuvvwwxyyzaaaaaaaaabbccddddeeeeeeeeeeeeffggghhiiiiiiiiijkllllmmnnnnnnooooooooppqrrrrrrssssttttttuuuuvvwwxyyzaaaaaaaaabbccddddeeeeeeeeeeeeffggghhiiiiiiiiijkllllmmnnnnnnooooooooppqrrrrrrssssttttttuuuuvvwwxyyz";
 
 	private ConveyorGameState gameState;
+
+	[SerializeField]
 	private ConveyorView gameView;
 
 	private Timer TimerCheckForMinLetters;
 	private Timer TimerPushNewLetter;
 
-	public static GameObject tileRef;
+	private PlayHolderView playHolder;
+	private BeltView belt;
 
 	// Use this for initialization
 	void Start () {
@@ -37,9 +40,10 @@ public class ConveyorEngine : MonoBehaviour {
 		gameState = new ConveyorGameState ();
 		gameState.Initialize ();
 
-		gameView = new ConveyorView ();
+		playHolder = GameObject.Find ("PlayHolderGameObject").GetComponent<PlayHolderView> ();
+		belt = GameObject.Find ("ConveyorBeltGameObject").GetComponent<BeltView> ();
 
-		tileRef = Resources.Load ("LetterTilePrefab") as GameObject;
+		//tileRef = Resources.Load ("LetterTilePrefab") as GameObject;
 
 
 		StartCoroutine (PushNewLetterCoroutine (timeForPushLetter));
@@ -162,8 +166,12 @@ public class ConveyorEngine : MonoBehaviour {
 
 		LetterTile newTile = gameState.PullTileFromBag ();
 		GameObject tileGameObject = gameView.addNewTile ();
-		newTile.activateTile (tileGameObject);
+
+		newTile.activateTile (tileGameObject.GetComponent<LetterTileView> ());
 		tileGameObject.GetComponentInChildren<TextMesh> ().text = newTile.getLetterValue ().ToString ().ToUpper();
+		tileGameObject.GetComponent<LetterTileView> ().clickEvent += LetterTileClickHandler;
+
+		belt.AddTile (tileGameObject.GetComponent<LetterTileView> ());
 
 		int num = gameState.GetNumActiveTiles ();
 
@@ -171,7 +179,9 @@ public class ConveyorEngine : MonoBehaviour {
 			RemoveOldestLetter ();
 		}
 
-		gameState.DebugGameState ();
+
+
+		//gameState.DebugGameState ();
 	}
 
 	void RemoveOldestLetter ()
@@ -179,6 +189,22 @@ public class ConveyorEngine : MonoBehaviour {
 
 		gameState.RemoveOldestTile ();
 
+	}
+
+	void LetterTileClickHandler (LetterTile clickedTile)
+	{
+		switch (clickedTile.state) {
+		case LetterTile.STATE_ONBELT:
+		case LetterTile.STATE_FALLING:
+			clickedTile.state = LetterTile.STATE_INPLAY;
+			playHolder.addTile (clickedTile.tileView);
+			break;
+		case LetterTile.STATE_INPLAY:
+			clickedTile.state = LetterTile.STATE_ONBELT;
+			playHolder.removeTile (clickedTile.tileView);
+			belt.repositionTiles ();
+			break;
+		}
 	}
 
 }

@@ -4,8 +4,13 @@ using UnityEngine;
 
 public class LetterTileView : MonoBehaviour {
 
-	float flySpeed = 0f;
-	float rotate;
+	public delegate void clickDelegate (LetterTile clickedTile);
+	public event clickDelegate clickEvent;
+
+	public LetterTile LetterTileModel;
+			
+	Vector2 currentPos = new Vector2 (0f, 0f);
+	Vector2 moveToPos = new Vector2 (0f, 0f);
 
 	// Use this for initialization
 	void Start () {
@@ -15,19 +20,24 @@ public class LetterTileView : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
-		if (flySpeed != 0f) {
-			flySpeed += .01f;
+		currentPos.x -= (currentPos.x - moveToPos.x)/8;
+		currentPos.y -= (currentPos.y - moveToPos.y)/8;
 
-			transform.eulerAngles = transform.eulerAngles + new Vector3(rotate, 0, rotate);
-			transform.position = transform.position + new Vector3 (0f, flySpeed, 0f);
-		} else {
-			transform.Translate (-.005f, 0f, 0f);
-		}
+		//transform.eulerAngles = new Vector3(xrot, xrot*1.4f, xrot*.6f);
+		transform.position = new Vector3 (currentPos.x, currentPos.y, 0f);
 	}
 
 	void OnMouseDown ()
 	{
-		rotate = Random.Range (-5f, 5f);
-		flySpeed = Random.Range (.001f, .05f);
+		clickEvent (LetterTileModel);
 	}
+
+	public void moveTo (Vector2 pos)
+	{
+
+		moveToPos = pos;
+
+	}
+
 }
+
