@@ -21,7 +21,7 @@ public class PlayHolderView : MonoBehaviour {
 
 	public void addTile (LetterTileView tile)
 	{
-
+		tile.setInPlay ();
 		tiles.Add (tile);
 		repositionTiles ();
 	}
@@ -39,7 +39,7 @@ public class PlayHolderView : MonoBehaviour {
 
 		foreach (LetterTileView tile in tiles) {
 
-			tile.moveTo (new Vector2((tiles.Count*-.5f*tileSpace) + transform.position.x + (count * tileSpace), transform.position.y));
+			tile.moveTo (new Vector2(((tiles.Count-1)*-.5f*tileSpace) + transform.position.x + (count * tileSpace), transform.position.y));
 			count++;
 		}
 

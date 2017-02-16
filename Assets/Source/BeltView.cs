@@ -23,18 +23,24 @@ public class BeltView : MonoBehaviour {
 	{
 
 		tiles.Add (tile);
+		tile.moveTo (new Vector2 (transform.position.x + 3f, transform.position.y), true);
+
 		repositionTiles ();
 
 	}
 
+	public void removeTile (LetterTileView tile)
+	{
+		tiles.Remove(tile);
+	}
+
 	public void repositionTiles ()
 	{
-
 		float count = 0f;
 
 		foreach (LetterTileView tile in tiles) {
 
-			if (tile.LetterTileModel.state == LetterTile.STATE_ONBELT) {
+			if (tile.model.state == LetterTileModel.STATE_ONBELT) {
 				tile.moveTo (new Vector2 (transform.position.x - (tiles.Count * tileSpace) + count * tileSpace, transform.position.y));
 			}
 			count++;

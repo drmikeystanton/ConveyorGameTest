@@ -4,8 +4,15 @@ using UnityEngine;
 
 public class ConveyorView : MonoBehaviour {
 
+
+
 	[SerializeField]
-	private GameObject tileRef;
+	private PlayHolderView playHolder;
+
+	[SerializeField]
+	private BeltView belt;
+
+	public LetterTileView fallingTile;
 
 	// Use this for initialization
 	void Start () {
@@ -14,19 +21,11 @@ public class ConveyorView : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
 	}
 
-	public GameObject addNewTile ()
+	public void setFallingTile (LetterTileView tile)
 	{
-
-		GameObject newTile = GameObject.Instantiate (tileRef) as GameObject;
-		return newTile;
-
+		fallingTile = tile;
 	}
 
-	public void UpdateActiveTiles ()
-	{
-
-	}
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LetterTile {
+public class LetterTileModel {
 
 	static string BONUS_MULTIPLY2 = "bonus multiply 2";
 	static string BONUS_MULTIPLY3 = "bonus multiply 3";
@@ -11,6 +11,7 @@ public class LetterTile {
 	public const string STATE_ONBELT = "state on belt";
 	public const string STATE_INPLAY = "state in play";
 	public const string STATE_FALLING = "state falling";
+	public const string STATE_DEAD = "state dead";
 
 	public string state;
 
@@ -37,8 +38,12 @@ public class LetterTile {
 	{
 		state = STATE_ONBELT;
 		tileView = _tileView;
-		tileView.LetterTileModel = this;
+	}
 
+	public void deactivateTile ()
+	{
+		state = STATE_DEAD;
+		tileView = null;
 	}
 
 	public char getLetterValue ()

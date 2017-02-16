@@ -1,49 +1,73 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 using UnityEngine;
 
 public class ConveyorGameState {
 
-	private List<LetterTile> tileBag;				// tiles waiting to get pulled
-	private List<LetterTile> activeTiles;			// the tiles currently in play on the conveyor
+	private List<LetterTileModel> tileBag;				// tiles waiting to get pulled
+	private List<LetterTileModel> activeTiles;			// the tiles currently in play on the belt
+
+	private List<char> TempLetters;
+	private string letters = "aaaaaaaaabbccddddeeeeeeeeeeeeffggghhiiiiiiiiijkllllmmnnnnnnooooooooppqrrrrrrssssttttttuuuuvvwwxyyzaaaaaaaaabbccddddeeeeeeeeeeeeffggghhiiiiiiiiijkllllmmnnnnnnooooooooppqrrrrrrssssttttttuuuuvvwwxyyzaaaaaaaaabbccddddeeeeeeeeeeeeffggghhiiiiiiiiijkllllmmnnnnnnooooooooppqrrrrrrssssttttttuuuuvvwwxyyz";
 
 	private int randomBagTilePos;
 
 	private System.Random rnd;
 
 	public void Initialize () {
-		tileBag = new List<LetterTile> ();
-		activeTiles = new List<LetterTile> ();
+		tileBag = new List<LetterTileModel> ();
+		activeTiles = new List<LetterTileModel> ();
 		rnd = new System.Random ();
 	}
 
-	public void AddToTileBag (LetterTile _tile)
+	public void AddToTileBag (LetterTileModel _tile)
 	{
 
 		tileBag.Add(_tile);
-		//Debug.Log ("add to tile bag"+ tileBag.Count + " "+_tile);
 
 	}
 
-	public LetterTile PullTileFromBag ()
+	public LetterTileModel PullTileFromBag ()
 	{
+
+		if (IsBagEmpty ()) {
+
+			RefillBag ();
+		}
 
 		randomBagTilePos = rnd.Next(0, tileBag.Count);
 		//randomBagTilePos = (int)Random.Range(0, tileBag.Count);
-		LetterTile newTile = tileBag[randomBagTilePos];
+		LetterTileModel newTile = tileBag[randomBagTilePos];
 		activeTiles.Add(newTile);
-		tileBag.RemoveAt(randomBagTilePos);
+		tileBag.Remove (newTile);
 
 		return newTile;
 
 	}
 
-	public void RemoveOldestTile ()
+	void RefillBag ()
 	{
 
-		activeTiles.RemoveAt (0);
+		//TempLetters = new List<char> (LetterDistribution);
+		TempLetters = letters.ToCharArray ().ToList();
 
+		foreach (char s in TempLetters) {
+			LetterTileModel tile = new LetterTileModel ();
+			tile.setupTile (s);
+			AddToTileBag (tile);
+		}
+
+		//Debug.Log ("Refilled bag "+gameState.GetNumActiveTiles().ToString());
+
+	}
+
+	public LetterTileModel RemoveOldestTile ()
+	{
+		LetterTileModel oldTile = activeTiles [0];
+		activeTiles.RemoveAt (0);
+		return oldTile;
 	}
 
 	public int GetNumActiveTiles ()
@@ -60,24 +84,18 @@ public class ConveyorGameState {
 		return false;
 	}
 
-	public List<LetterTile> GetActiveTiles ()
+	public List<LetterTileModel> GetActiveTiles ()
 	{
 
 		return activeTiles;
 
 	}
 
-	public void DebugGameState ()
-	{
-
-		string stateString = "";
-
-		foreach (LetterTile tile in activeTiles) {
-			stateString += tile.ToString ();
+	public bool isTileOnBelt (LetterTileModel _tile){
+		if (activeTiles.IndexOf (_tile) == -1) {
+			return false;
 		}
-
-		Debug.Log (stateString);
-
+		return true;
 	}
 
 }

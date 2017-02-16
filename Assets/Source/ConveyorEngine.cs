@@ -8,15 +8,14 @@ public class ConveyorEngine : MonoBehaviour {
 
 	const int minActiveLetters = 3;
 	const int maxActiveLetters = 8;
-	const float timeForMinLetterCheck = .5f;
-	const float timeForPushLetter = 5f;
+	const float timeForMinLetterCheck = .6f;
+	const float timeForPushLetter = 2f;
 
 
 
 
 	private List<char> LetterDistribution;
-	private List<char> TempLetters;
-	private string letters = "aaaaaaaaabbccddddeeeeeeeeeeeeffggghhiiiiiiiiijkllllmmnnnnnnooooooooppqrrrrrrssssttttttuuuuvvwwxyyzaaaaaaaaabbccddddeeeeeeeeeeeeffggghhiiiiiiiiijkllllmmnnnnnnooooooooppqrrrrrrssssttttttuuuuvvwwxyyzaaaaaaaaabbccddddeeeeeeeeeeeeffggghhiiiiiiiiijkllllmmnnnnnnooooooooppqrrrrrrssssttttttuuuuvvwwxyyz";
+
 
 	private ConveyorGameState gameState;
 
@@ -87,6 +86,10 @@ public class ConveyorEngine : MonoBehaviour {
 		/*if (Input.GetMouseButtonDown (0)) {
 			PushNewLetter ();
 		}*/
+		if (gameView.fallingTile != null && gameView.fallingTile.transform.position.y < -5f) {
+			KillTile (gameView.fallingTile.model);
+			gameView.fallingTile = null;
+		}
 	}
 
 	void OnDestroy ()
@@ -101,21 +104,7 @@ public class ConveyorEngine : MonoBehaviour {
 
 
 
-	void RefillBag ()
-	{
 
-		//TempLetters = new List<char> (LetterDistribution);
-		TempLetters = letters.ToCharArray ().ToList();
-
-		foreach (char s in TempLetters) {
-			LetterTile tile = new LetterTile ();
-			tile.setupTile (s);
-			gameState.AddToTileBag (tile);
-		}
-
-		//Debug.Log ("Refilled bag "+gameState.GetNumActiveTiles().ToString());
-
-	}
 
 	private IEnumerator CheckForMinLettersCoroutine (float delay)
 	{
@@ -132,10 +121,6 @@ public class ConveyorEngine : MonoBehaviour {
 
 	void CheckForMinLetters ()
 	{
-
-		if (gameState.IsBagEmpty ()) {
-			RefillBag ();
-		}
 
 		int num = gameState.GetNumActiveTiles ();
 
@@ -159,52 +144,66 @@ public class ConveyorEngine : MonoBehaviour {
 
 	void PushNewLetter ()
 	{
-		if (gameState.IsBagEmpty ()) {
+		
+		GameObject tileGameObject = TileFactoryPool.GetTile ();
+		LetterTileModel newTileModel = gameState.PullTileFromBag ();
+		LetterTileView tileView = tileGameObject.GetComponent<LetterTileView> ();
 
-			RefillBag ();
-		}
+		newTileModel.activateTile (tileView);
+		tileView.activate (newTileModel, LetterTileClickHandler);
 
-		LetterTile newTile = gameState.PullTileFromBag ();
-		GameObject tileGameObject = gameView.addNewTile ();
-
-		newTile.activateTile (tileGameObject.GetComponent<LetterTileView> ());
-		tileGameObject.GetComponentInChildren<TextMesh> ().text = newTile.getLetterValue ().ToString ().ToUpper();
-		tileGameObject.GetComponent<LetterTileView> ().clickEvent += LetterTileClickHandler;
-
-		belt.AddTile (tileGameObject.GetComponent<LetterTileView> ());
+		belt.AddTile (tileView);
 
 		int num = gameState.GetNumActiveTiles ();
 
-		if (num > maxActiveLetters) {
+		if (num >= maxActiveLetters) {
 			RemoveOldestLetter ();
 		}
 
-
-
-		//gameState.DebugGameState ();
 	}
 
 	void RemoveOldestLetter ()
 	{
 
-		gameState.RemoveOldestTile ();
-
-	}
-
-	void LetterTileClickHandler (LetterTile clickedTile)
-	{
-		switch (clickedTile.state) {
-		case LetterTile.STATE_ONBELT:
-		case LetterTile.STATE_FALLING:
-			clickedTile.state = LetterTile.STATE_INPLAY;
-			playHolder.addTile (clickedTile.tileView);
-			break;
-		case LetterTile.STATE_INPLAY:
-			clickedTile.state = LetterTile.STATE_ONBELT;
-			playHolder.removeTile (clickedTile.tileView);
-			belt.repositionTiles ();
+		LetterTileModel oldTile = gameState.RemoveOldestTile ();
+		belt.removeTile (oldTile.tileView);
+		switch (oldTile.state) {
+		case LetterTileModel.STATE_ONBELT:
+			gameView.setFallingTile (oldTile.tileView);
+			oldTile.state = LetterTileModel.STATE_FALLING;
 			break;
 		}
+	}
+
+	void LetterTileClickHandler (LetterTileModel clickedTile)
+	{
+		switch (clickedTile.state) {
+		case LetterTileModel.STATE_ONBELT:
+		case LetterTileModel.STATE_FALLING:
+			clickedTile.state = LetterTileModel.STATE_INPLAY;
+			playHolder.addTile (clickedTile.tileView);
+			break;
+		case LetterTileModel.STATE_INPLAY:
+			playHolder.removeTile (clickedTile.tileView);
+			if (gameState.isTileOnBelt(clickedTile)) {
+				clickedTile.state = LetterTileModel.STATE_ONBELT;
+				belt.repositionTiles ();
+			} else {
+				KillTile (clickedTile);
+			}
+			break;
+		case LetterTileModel.STATE_DEAD:
+			break;
+		}
+	}
+
+	void KillTile (LetterTileModel _tile) {
+
+		_tile.state = LetterTileModel.STATE_DEAD;
+		TileFactoryPool.ReturnTile (_tile.tileView.gameObject);
+		belt.removeTile (_tile.tileView);
+		_tile.deactivateTile ();
+
 	}
 
 }
