@@ -90,12 +90,11 @@ public class LetterTileView : MonoBehaviour {
 
 	public void moveTo (Vector2 pos, bool jump=false)
 	{
-
 		moveToPos = pos;
 		if (jump) {
 			currentPos = pos;
+			transform.position = new Vector3 (currentPos.x, currentPos.y, 0f);
 		}
-
 	}
 
 }

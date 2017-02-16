@@ -19,12 +19,16 @@ public class BeltView : MonoBehaviour {
 		
 	}
 
-	public void AddTile (LetterTileView tile)
-	{
+	public void MoveTileToStart (LetterTileView tile) {
 
-		tiles.Add (tile);
 		tile.moveTo (new Vector2 (transform.position.x + 3f, transform.position.y), true);
 
+	}
+
+	public void AddTile (LetterTileView tile)
+	{
+		MoveTileToStart (tile);
+		tiles.Add (tile);
 		repositionTiles ();
 
 	}

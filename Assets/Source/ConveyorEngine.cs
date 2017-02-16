@@ -202,6 +202,7 @@ public class ConveyorEngine : MonoBehaviour {
 		_tile.state = LetterTileModel.STATE_DEAD;
 		TileFactoryPool.ReturnTile (_tile.tileView.gameObject);
 		belt.removeTile (_tile.tileView);
+		belt.MoveTileToStart(_tile.tileView);
 		_tile.deactivateTile ();
 
 	}
