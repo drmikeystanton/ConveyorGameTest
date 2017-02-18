@@ -41,8 +41,6 @@ public class TileFactoryPool : MonoBehaviour {
 
 		}
 
-		print (tilePool.Count);
-
 		GameObject returnTile = tilePool [0];
 		tilePool.Remove (returnTile);
 		return returnTile;

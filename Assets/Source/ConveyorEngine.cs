@@ -9,7 +9,7 @@ public class ConveyorEngine : MonoBehaviour {
 	const int minActiveLetters = 3;
 	const int maxActiveLetters = 8;
 	const float timeForMinLetterCheck = .6f;
-	const float timeForPushLetter = 2f;
+	const float timeForPushLetter = 3.5f;
 
 
 
@@ -28,6 +28,9 @@ public class ConveyorEngine : MonoBehaviour {
 	private PlayHolderView playHolder;
 	private BeltView belt;
 
+	[SerializeField]
+	private PlayButtonView playButton;
+
 	// Use this for initialization
 	void Start () {
 
@@ -44,9 +47,14 @@ public class ConveyorEngine : MonoBehaviour {
 
 		//tileRef = Resources.Load ("LetterTilePrefab") as GameObject;
 
+		playButton.clickEvent += handlePlayButtonClick;
 
 		StartCoroutine (PushNewLetterCoroutine (timeForPushLetter));
 		StartCoroutine (CheckForMinLettersCoroutine (timeForMinLetterCheck));
+
+		SpellChecker.setup ();
+
+	
 
 	}
 
@@ -181,20 +189,27 @@ public class ConveyorEngine : MonoBehaviour {
 		case LetterTileModel.STATE_ONBELT:
 		case LetterTileModel.STATE_FALLING:
 			clickedTile.state = LetterTileModel.STATE_INPLAY;
+			gameState.AddTileToPlay (clickedTile);
 			playHolder.addTile (clickedTile.tileView);
 			break;
 		case LetterTileModel.STATE_INPLAY:
-			playHolder.removeTile (clickedTile.tileView);
-			if (gameState.isTileOnBelt(clickedTile)) {
-				clickedTile.state = LetterTileModel.STATE_ONBELT;
-				belt.repositionTiles ();
-			} else {
-				KillTile (clickedTile);
-			}
+			removeTileFromPlay (clickedTile);
 			break;
 		case LetterTileModel.STATE_DEAD:
 			break;
 		}
+	}
+
+	void removeTileFromPlay (LetterTileModel tile) {
+
+		playHolder.removeTile (tile.tileView);
+		if (gameState.isTileOnBelt(tile)) {
+			tile.state = LetterTileModel.STATE_ONBELT;
+			belt.repositionTiles ();
+		} else {
+			KillTile (tile);
+		}
+
 	}
 
 	void KillTile (LetterTileModel _tile) {
@@ -204,6 +219,40 @@ public class ConveyorEngine : MonoBehaviour {
 		belt.removeTile (_tile.tileView);
 		belt.MoveTileToStart(_tile.tileView);
 		_tile.deactivateTile ();
+
+	}
+
+
+	void handlePlayButtonClick () {
+
+		string wordPlayed = gameState.GetWordToPlay ();
+
+		if (wordPlayed.Length < 3)
+			return;
+
+
+
+		List<LetterTileModel> inPlayTiles = gameState.GetInPlayTiles ();
+
+		bool valid = SpellChecker.CheckWord (wordPlayed.ToLower ());
+
+		print (wordPlayed + " is a " + valid + " play");
+
+		if (valid) {
+
+			foreach (LetterTileModel tile in inPlayTiles) {
+				KillTile (tile);
+			}
+
+		} else {
+
+			foreach (LetterTileModel tile in inPlayTiles) {
+				removeTileFromPlay (tile);
+			}
+
+		}
+
+		gameState.ClearTilesInPlay ();
 
 	}
 

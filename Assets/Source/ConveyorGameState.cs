@@ -8,6 +8,7 @@ public class ConveyorGameState {
 
 	private List<LetterTileModel> tileBag;				// tiles waiting to get pulled
 	private List<LetterTileModel> activeTiles;			// the tiles currently in play on the belt
+	private List<LetterTileModel> inPlayTiles;
 
 	private List<char> TempLetters;
 	private string letters = "aaaaaaaaabbccddddeeeeeeeeeeeeffggghhiiiiiiiiijkllllmmnnnnnnooooooooppqrrrrrrssssttttttuuuuvvwwxyyzaaaaaaaaabbccddddeeeeeeeeeeeeffggghhiiiiiiiiijkllllmmnnnnnnooooooooppqrrrrrrssssttttttuuuuvvwwxyyzaaaaaaaaabbccddddeeeeeeeeeeeeffggghhiiiiiiiiijkllllmmnnnnnnooooooooppqrrrrrrssssttttttuuuuvvwwxyyz";
@@ -19,6 +20,7 @@ public class ConveyorGameState {
 	public void Initialize () {
 		tileBag = new List<LetterTileModel> ();
 		activeTiles = new List<LetterTileModel> ();
+		inPlayTiles = new List<LetterTileModel> ();
 		rnd = new System.Random ();
 	}
 
@@ -91,11 +93,48 @@ public class ConveyorGameState {
 
 	}
 
+	public List<LetterTileModel> GetInPlayTiles ()
+	{
+
+		return inPlayTiles;
+
+	}
+
 	public bool isTileOnBelt (LetterTileModel _tile){
 		if (activeTiles.IndexOf (_tile) == -1) {
 			return false;
 		}
 		return true;
+	}
+
+	public void AddTileToPlay (LetterTileModel tile) {
+
+		inPlayTiles.Add (tile);
+
+	}
+
+	public void RemoveTileFromPlay (LetterTileModel tile) {
+
+		inPlayTiles.Remove (tile);
+
+	}
+
+	public void ClearTilesInPlay () {
+
+		inPlayTiles.Clear ();
+
+	}
+
+	public string GetWordToPlay () {
+
+		string word = "";
+
+		foreach (LetterTileModel tile in inPlayTiles) {
+			word += tile.getLetterValue ().ToString ().ToLower ();
+
+		}
+
+		return word;
 	}
 
 }
