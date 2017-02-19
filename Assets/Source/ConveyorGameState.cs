@@ -72,6 +72,11 @@ public class ConveyorGameState {
 		return oldTile;
 	}
 
+	public void RemoveActiveTile (LetterTileModel tile) {
+		activeTiles.Remove(tile);
+	}
+		
+
 	public int GetNumActiveTiles ()
 	{
 		return activeTiles.Count;

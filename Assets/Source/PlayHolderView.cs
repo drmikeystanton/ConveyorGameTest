@@ -28,7 +28,7 @@ public class PlayHolderView : MonoBehaviour {
 
 	public void removeTile (LetterTileView tile)
 	{
-		tiles.RemoveAt(tiles.IndexOf(tile));
+		tiles.Remove(tile);
 		repositionTiles ();
 	}
 

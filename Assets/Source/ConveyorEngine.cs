@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class ConveyorEngine : MonoBehaviour {
 
-	const int minActiveLetters = 3;
+	const int minActiveLetters = 5;
 	const int maxActiveLetters = 8;
-	const float timeForMinLetterCheck = .6f;
+	const float timeForMinLetterCheck = .4f;
 	const float timeForPushLetter = 3.5f;
 
 
@@ -203,6 +203,7 @@ public class ConveyorEngine : MonoBehaviour {
 	void removeTileFromPlay (LetterTileModel tile) {
 
 		playHolder.removeTile (tile.tileView);
+		gameState.RemoveTileFromPlay (tile);
 		if (gameState.isTileOnBelt(tile)) {
 			tile.state = LetterTileModel.STATE_ONBELT;
 			belt.repositionTiles ();
@@ -212,13 +213,26 @@ public class ConveyorEngine : MonoBehaviour {
 
 	}
 
-	void KillTile (LetterTileModel _tile) {
+	void KillTile (LetterTileModel tile) {
 
-		_tile.state = LetterTileModel.STATE_DEAD;
-		TileFactoryPool.ReturnTile (_tile.tileView.gameObject);
-		belt.removeTile (_tile.tileView);
-		belt.MoveTileToStart(_tile.tileView);
-		_tile.deactivateTile ();
+		if (tile.state == LetterTileModel.STATE_DEAD)
+			return;
+		
+
+		tile.state = LetterTileModel.STATE_DEAD;
+		gameState.RemoveActiveTile (tile);
+
+		playHolder.removeTile (tile.tileView);
+		gameState.RemoveTileFromPlay (tile);
+		if (gameState.isTileOnBelt(tile)) {
+			tile.state = LetterTileModel.STATE_ONBELT;
+			belt.repositionTiles ();
+		}
+
+		TileFactoryPool.ReturnTile (tile.tileView.gameObject);
+		belt.removeTile (tile.tileView);
+		belt.MoveTileToStart(tile.tileView);
+		tile.deactivateTile ();
 
 	}
 
@@ -236,18 +250,16 @@ public class ConveyorEngine : MonoBehaviour {
 
 		bool valid = SpellChecker.CheckWord (wordPlayed.ToLower ());
 
-		print (wordPlayed + " is a " + valid + " play");
-
 		if (valid) {
 
-			foreach (LetterTileModel tile in inPlayTiles) {
-				KillTile (tile);
+			while (inPlayTiles.Count > 0) {
+				KillTile (inPlayTiles[0]);
 			}
 
 		} else {
 
-			foreach (LetterTileModel tile in inPlayTiles) {
-				removeTileFromPlay (tile);
+			while (inPlayTiles.Count > 0) {
+				removeTileFromPlay (inPlayTiles[0]);
 			}
 
 		}
